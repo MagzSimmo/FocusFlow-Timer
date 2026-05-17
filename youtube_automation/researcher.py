@@ -16,16 +16,18 @@ def research_topic(topic: str, api_key: str) -> str:
     genai.configure(api_key=api_key)
 
     prompt = (
-        f"Research the following hospitality and direct bookings topic for a YouTube video script:\n\n"
+        f"Research the following topic for a Booked Wild YouTube video script:\n\n"
         f"Topic: {topic}\n\n"
-        "Audience: independent hospitality operators (hotel owners, guesthouse operators, boutique venues).\n\n"
+        "Audience: independent travel business owners — hotels, guesthouses, B&Bs, tour "
+        "operators, boutique venues, activity providers — who want to reduce OTA dependency, "
+        "improve AI/search visibility, and grow direct bookings.\n\n"
         "Provide a concise research pack with:\n"
         "- 3–5 bullet points of specific, credible facts, stats, or insights\n"
         "- Each bullet must include a named source (e.g. STR, Phocuswire, Skift, CBRE, "
-        "TravelClick, hospitality trade publications, or named academic research)\n"
+        "TravelClick, Siteminder, AirDNA, or named academic/trade research)\n"
         "- Avoid weak listicles, thin marketing blogs, and unsupported SEO claims\n"
-        "- Focus on direct booking behaviour, OTA commission costs, hotel revenue trends, "
-        "or guest experience data\n"
+        "- Focus on: OTA commission costs, direct booking behaviour, AI/search visibility "
+        "trends, travel business revenue, or guest booking psychology\n"
         "- UK English\n\n"
         "Format each bullet as: • [Fact/stat/insight]. (Source: [Name, Year if available])\n"
         "Return ONLY the bullet points, no introduction or summary."

@@ -33,15 +33,17 @@ def generate_topic(history_path: str, api_key: str) -> str:
 
     prompt = (
         f"You are a content strategist for '{config.CHANNEL_NAME}', a YouTube channel "
-        "helping independent hospitality operators — hotel owners, guesthouse operators, "
-        "boutique venues — reduce OTA dependency and grow direct bookings.\n\n"
+        "helping independent travel business owners — hotels, guesthouses, B&Bs, tour "
+        "operators, boutique venues, and activity providers — get found by AI, grow direct "
+        "bookings, and stop losing margin and customer data to OTAs.\n\n"
         f"{avoid_block}\n\n"
         "Generate ONE new video topic title. Requirements:\n"
         "- 8–12 words\n"
         "- Specific and actionable, not generic\n"
         "- Written from the operator's perspective (their question or problem)\n"
         "- UK English\n"
-        "- Relevant to direct bookings, OTA strategy, hotel revenue, or the Deep Insight Audit\n"
+        "- Relevant to: OTA dependency, AI/search visibility, direct booking conversion, "
+        "margin loss, customer data ownership, or the Deep Insight Audit\n"
         "- Must NOT make booking/revenue/ranking guarantees\n\n"
         "Inspiration themes (don't copy verbatim):\n"
         + "\n".join(f"- {s}" for s in seeds_sample)
