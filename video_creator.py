@@ -46,23 +46,26 @@ def _wrap_text(text: str, font, max_width: int, draw: ImageDraw.ImageDraw) -> st
     return "\n".join(lines)
 
 
-def _generate_slide_image_gemini(heading: str, api_key: str) -> Image.Image | None:
-    """Ask Gemini Imagen to generate a 1920x1080 background image for a slide."""
+def _fetch_pexels_image(query: str, api_key: str, size: tuple[int, int]) -> Image.Image | None:
+    """Fetch a relevant stock photo from Pexels as a slide background."""
+    import requests
     try:
-        genai.configure(api_key=api_key)
-        imagen = genai.ImageGenerationModel(config.GEMINI_IMAGE_MODEL)
-        prompt = (
-            f"Professional dark minimalist background image for an independent travel "
-            f"business video slide about: {heading}. Abstract, nature-inspired, "
-            f"deep navy and dark tones, subtle texture, no text, no people, "
-            f"suitable as a YouTube video slide background."
+        resp = requests.get(
+            "https://api.pexels.com/v1/search",
+            headers={"Authorization": api_key},
+            params={"query": query, "per_page": 1, "orientation": "landscape"},
+            timeout=10,
         )
-        result = imagen.generate_images(prompt=prompt, number_of_images=1)
-        if result.images:
-            img_bytes = result.images[0]._image_bytes
-            return Image.open(io.BytesIO(img_bytes)).resize(config.VIDEO_RESOLUTION)
+        resp.raise_for_status()
+        photos = resp.json().get("photos", [])
+        if not photos:
+            return None
+        img_url = photos[0]["src"]["original"]
+        img_resp = requests.get(img_url, timeout=20)
+        img_resp.raise_for_status()
+        return Image.open(io.BytesIO(img_resp.content)).resize(size)
     except Exception as e:
-        print(f"[video_creator] Gemini image generation failed: {e}. Using solid background.")
+        print(f"[video_creator] Pexels fetch failed: {e}. Using solid background.")
     return None
 
 
@@ -70,14 +73,15 @@ def _make_slide_image(
     heading: str,
     body_text: str,
     citation: str | None,
-    gemini_key: str | None,
-    use_gemini: bool,
+    pexels_key: str | None,
+    use_pexels: bool,
 ) -> Image.Image:
     w, h = config.VIDEO_RESOLUTION
     pad = config.TEXT_PADDING
 
-    if use_gemini and gemini_key:
-        bg = _generate_slide_image_gemini(heading, gemini_key)
+    if use_pexels and pexels_key:
+        search_query = f"travel nature {heading[:40]}"
+        bg = _fetch_pexels_image(search_query, pexels_key, (w, h))
     else:
         bg = None
 
@@ -258,7 +262,7 @@ def _synth_audio(text: str, output_path: Path, elevenlabs_key: str | None = None
 def build_video(
     script: VideoScript,
     output_path: Path,
-    gemini_key: str | None = None,
+    pexels_key: str | None = None,
     elevenlabs_key: str | None = None,
 ) -> Path:
     """
@@ -270,7 +274,7 @@ def build_video(
 
     clips = []
     audio_clips = []
-    gemini_calls_used = 0
+    pexels_calls_used = 0
 
     # ── Intro slide ───────────────────────────────────────────────────────────
     intro_audio_path = tmp_dir / "intro.mp3"
@@ -285,10 +289,10 @@ def build_video(
 
     # ── Content slides ────────────────────────────────────────────────────────
     for i, slide in enumerate(script.slides):
-        use_gemini = (
-            gemini_key is not None
+        use_pexels = (
+            pexels_key is not None
             and config.IMAGES_PER_VIDEO > 0
-            and gemini_calls_used < config.IMAGES_PER_VIDEO
+            and pexels_calls_used < config.IMAGES_PER_VIDEO
         )
 
         slide_audio_path = tmp_dir / f"slide_{i}.mp3"
@@ -299,11 +303,11 @@ def build_video(
             heading=slide.heading,
             body_text=slide.body_text,
             citation=slide.citation,
-            gemini_key=gemini_key,
-            use_gemini=use_gemini,
+            pexels_key=pexels_key,
+            use_pexels=use_pexels,
         )
-        if use_gemini:
-            gemini_calls_used += 1
+        if use_pexels:
+            pexels_calls_used += 1
 
         import numpy as np
         slide_arr = np.array(slide_img)

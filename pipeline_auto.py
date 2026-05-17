@@ -25,6 +25,7 @@ def run():
     anthropic_key = os.environ["ANTHROPIC_API_KEY"]
     gemini_key = os.environ.get("GEMINI_API_KEY")
     elevenlabs_key = os.environ.get("ELEVENLABS_API_KEY")
+    pexels_key = os.environ.get("PEXELS_API_KEY")
 
     run_dir = Path(tempfile.mkdtemp(prefix="yw_run_"))
     print(f"[pipeline] Run directory: {run_dir}")
@@ -50,13 +51,13 @@ def run():
         # 5 — Build video
         video_path = run_dir / "video.mp4"
         print("[pipeline] Building video...")
-        build_video(video_script, video_path, gemini_key=gemini_key, elevenlabs_key=elevenlabs_key)
+        build_video(video_script, video_path, pexels_key=pexels_key, elevenlabs_key=elevenlabs_key)
         print(f"[pipeline] Video: {video_path} ({video_path.stat().st_size // 1024 // 1024} MB)")
 
         # 6 — Thumbnail
         thumbnail_path = run_dir / "thumbnail.jpg"
         print("[pipeline] Creating thumbnail...")
-        generate_thumbnail(video_script.youtube_title, thumbnail_path, gemini_key=gemini_key)
+        generate_thumbnail(video_script.youtube_title, thumbnail_path, pexels_key=pexels_key)
 
         # 7 — Upload
         print("[pipeline] Uploading to YouTube...")

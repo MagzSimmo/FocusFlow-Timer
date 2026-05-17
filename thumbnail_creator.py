@@ -5,7 +5,7 @@ from __future__ import annotations
 import io
 from pathlib import Path
 
-import google.generativeai as genai
+import requests
 from PIL import Image, ImageDraw, ImageFont
 
 import config
@@ -34,39 +34,41 @@ def _wrap_text(text: str, font, max_width: int, draw: ImageDraw.ImageDraw) -> st
     return "\n".join(lines)
 
 
-def _gemini_background(title: str, api_key: str) -> Image.Image | None:
+def _pexels_background(title: str, api_key: str) -> Image.Image | None:
     try:
-        genai.configure(api_key=api_key)
-        imagen = genai.ImageGenerationModel(config.GEMINI_IMAGE_MODEL)
-        prompt = (
-            f"Bold professional thumbnail background for an independent travel marketing "
-            f"YouTube video: {title}. Dark navy background, dramatic travel/nature-inspired "
-            "lighting, abstract landscape or journey concept, no text, no people, "
-            "suitable for YouTube thumbnail."
+        resp = requests.get(
+            "https://api.pexels.com/v1/search",
+            headers={"Authorization": api_key},
+            params={"query": f"travel nature landscape {title[:40]}", "per_page": 1, "orientation": "landscape"},
+            timeout=10,
         )
-        result = imagen.generate_images(prompt=prompt, number_of_images=1)
-        if result.images:
-            img_bytes = result.images[0]._image_bytes
-            return Image.open(io.BytesIO(img_bytes)).resize(config.THUMBNAIL_RESOLUTION)
+        resp.raise_for_status()
+        photos = resp.json().get("photos", [])
+        if not photos:
+            return None
+        img_url = photos[0]["src"]["original"]
+        img_resp = requests.get(img_url, timeout=20)
+        img_resp.raise_for_status()
+        return Image.open(io.BytesIO(img_resp.content)).resize(config.THUMBNAIL_RESOLUTION)
     except Exception as e:
-        print(f"[thumbnail] Gemini image failed: {e}. Using solid background.")
+        print(f"[thumbnail] Pexels fetch failed: {e}. Using solid background.")
     return None
 
 
 def generate_thumbnail(
     title: str,
     output_path: Path,
-    gemini_key: str | None = None,
+    pexels_key: str | None = None,
 ) -> Path:
     """
     Create a 1280x720 JPEG thumbnail.
-    Uses Gemini for background if a key is provided, otherwise Pillow-only.
+    Uses Pexels for background if a key is provided, otherwise Pillow-only.
     """
     w, h = config.THUMBNAIL_RESOLUTION
 
     bg = None
-    if gemini_key and config.IMAGES_PER_VIDEO > 0:
-        bg = _gemini_background(title, gemini_key)
+    if pexels_key and config.IMAGES_PER_VIDEO > 0:
+        bg = _pexels_background(title, pexels_key)
 
     if bg is None:
         bg = Image.new("RGB", (w, h), color=config.BACKGROUND_COLOR)

@@ -54,9 +54,24 @@ VIDEO_RESOLUTION = (1920, 1080)
 VIDEO_FPS = 24
 THUMBNAIL_RESOLUTION = (1280, 720)
 
-IMAGES_PER_VIDEO = 4    # Gemini Imagen calls per video; set to 0 for Pillow-only (free)
+IMAGES_PER_VIDEO = 4    # Pexels image calls per video; set to 0 for Pillow-only
 
-FONT_PATH = "assets/font.ttf"
+# Font: try assets first, then common system fonts (Ubuntu/Debian on GitHub Actions)
+import os as _os
+def _find_font() -> str:
+    candidates = [
+        "assets/font.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+        "/usr/share/fonts/truetype/ubuntu/Ubuntu-B.ttf",
+        "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
+    ]
+    for p in candidates:
+        if _os.path.exists(p):
+            return p
+    return candidates[0]
+
+FONT_PATH = _find_font()
 FONT_SIZE_TITLE = 80
 FONT_SIZE_HEADING = 64
 FONT_SIZE_BODY = 46
