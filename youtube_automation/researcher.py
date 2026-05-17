@@ -16,14 +16,18 @@ def research_topic(topic: str, api_key: str) -> str:
     genai.configure(api_key=api_key)
 
     prompt = (
-        f"Research the following B2B sales topic for a YouTube video script:\n\n"
+        f"Research the following hospitality and direct bookings topic for a YouTube video script:\n\n"
         f"Topic: {topic}\n\n"
+        "Audience: independent hospitality operators (hotel owners, guesthouse operators, boutique venues).\n\n"
         "Provide a concise research pack with:\n"
         "- 3–5 bullet points of specific, credible facts, stats, or insights\n"
-        "- Each bullet should include a source name (company, publication, or study)\n"
-        "- Focus on practical, data-backed points a B2B sales practitioner would find valuable\n"
+        "- Each bullet must include a named source (e.g. STR, Phocuswire, Skift, CBRE, "
+        "TravelClick, hospitality trade publications, or named academic research)\n"
+        "- Avoid weak listicles, thin marketing blogs, and unsupported SEO claims\n"
+        "- Focus on direct booking behaviour, OTA commission costs, hotel revenue trends, "
+        "or guest experience data\n"
         "- UK English\n\n"
-        "Format each bullet as: • [Fact/stat]. (Source: [Name])\n"
+        "Format each bullet as: • [Fact/stat/insight]. (Source: [Name, Year if available])\n"
         "Return ONLY the bullet points, no introduction or summary."
     )
 
@@ -41,11 +45,11 @@ def research_topic(topic: str, api_key: str) -> str:
                 # Fall back to a generic research note rather than crashing the pipeline
                 print(f"[researcher] Gemini search failed: {e}. Using generic research note.")
                 return (
-                    f"• B2B cold outreach remains one of the highest-ROI sales channels "
-                    f"when done correctly. (Source: industry consensus)\n"
-                    f"• Personalised cold emails see 2–3× higher reply rates than generic templates. "
-                    f"(Source: Woodpecker, 2023)\n"
-                    f"• The average B2B buyer reads 3–5 pieces of content before engaging a vendor. "
-                    f"(Source: Demand Gen Report)\n"
+                    f"• OTA commissions typically range from 15–25% of the booking value, "
+                    f"representing a significant cost for independent operators. (Source: industry consensus)\n"
+                    f"• Direct bookings deliver higher average guest spend and stronger repeat visit rates "
+                    f"than OTA-sourced bookings. (Source: general hospitality trade data)\n"
+                    f"• Independent hotels that invest in direct booking optimisation report "
+                    f"measurable improvement in their direct channel mix over time. (Source: STR / operator case studies)\n"
                 )
             time.sleep(5 * (2 ** attempt))

@@ -33,15 +33,16 @@ def generate_topic(history_path: str, api_key: str) -> str:
 
     prompt = (
         f"You are a content strategist for '{config.CHANNEL_NAME}', a YouTube channel "
-        "teaching B2B sales and cold outreach to founders and sales reps at companies "
-        "with 1–200 employees.\n\n"
+        "helping independent hospitality operators — hotel owners, guesthouse operators, "
+        "boutique venues — reduce OTA dependency and grow direct bookings.\n\n"
         f"{avoid_block}\n\n"
         "Generate ONE new video topic title. Requirements:\n"
         "- 8–12 words\n"
         "- Specific and actionable, not generic\n"
-        "- Framed as a practical guide or insight\n"
+        "- Written from the operator's perspective (their question or problem)\n"
         "- UK English\n"
-        "- Relevant to cold outreach, ICPs, pain points, or value propositions\n\n"
+        "- Relevant to direct bookings, OTA strategy, hotel revenue, or the Deep Insight Audit\n"
+        "- Must NOT make booking/revenue/ranking guarantees\n\n"
         "Inspiration themes (don't copy verbatim):\n"
         + "\n".join(f"- {s}" for s in seeds_sample)
         + "\n\nReturn ONLY the topic title, nothing else."

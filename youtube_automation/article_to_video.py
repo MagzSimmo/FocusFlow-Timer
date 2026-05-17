@@ -42,23 +42,40 @@ def parse_article(md_text: str) -> VideoScript:
     current_heading = ""
     current_body: list[str] = []
 
+    # Headings that are excluded entirely from the video
+    _EXCLUDED_HEADINGS = {
+        "sources", "references", "source map",
+        "note for colin", "note for colin — not for publication",
+        "qc notes", "qc report",
+    }
+
+    # Headings that map to the CTA slide
+    _CTA_HEADINGS = {
+        "ready to find your direct booking gaps?",
+        "what should you do next?",
+        "next steps", "what next?", "cta",
+        "want to find your direct booking gaps?",
+    }
+
     def flush(heading: str, body_lines: list[str]):
         body = "\n".join(body_lines).strip()
-        if not body or heading.lower() in ("sources", "references"):
+        if not body:
             return
-        # Extract inline citation if present — e.g. (Source: Gartner)
+        if heading.lower() in _EXCLUDED_HEADINGS:
+            return
+        # Strip the "---" horizontal rule that precedes Note for Colin
+        if body.startswith("---"):
+            return
+
+        # Extract inline citation — e.g. (Source: STR, 2023)
         citation_match = re.search(r"\(Source:\s*([^)]+)\)", body)
         citation = citation_match.group(1).strip() if citation_match else None
-        # Remove citation from spoken body text
+        # Remove citations from spoken text (keep in slide footer instead)
         clean_body = re.sub(r"\s*\(Source:[^)]+\)", "", body).strip()
+        # Remove markdown link syntax from spoken text
+        clean_body = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", clean_body)
 
-        is_cta = heading.lower() in (
-            "what should you do next?",
-            "next steps",
-            "what next?",
-            "cta",
-        )
-        if is_cta:
+        if heading.lower() in _CTA_HEADINGS:
             script.cta = clean_body
         else:
             script.slides.append(VideoSlide(heading=heading, body_text=clean_body, citation=citation))

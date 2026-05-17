@@ -23,8 +23,9 @@ def _build_description(script: VideoScript) -> str:
     for slide in script.slides:
         lines.append(f"  • {slide.heading}")
     lines.append("")
-    lines.append(f"🔔 Subscribe for daily B2B sales tips: {config.CHANNEL_HANDLE}")
-    lines.append(f"\n#B2BSales #ColdOutreach #BookedWild #LeadGeneration #ICP")
+    lines.append(f"🔍 Find your direct booking gaps — Deep Insight Audit: {config.AUDIT_CTA_URL}")
+    lines.append(f"🔔 Subscribe for daily hospitality strategy: {config.CHANNEL_HANDLE}")
+    lines.append(f"\n#DirectBookings #HotelMarketing #HospitalityOperator #BookedWild #OTA")
     return "\n".join(lines)
 
 
