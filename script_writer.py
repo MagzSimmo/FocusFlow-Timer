@@ -117,7 +117,7 @@ def write_script(topic: str, research_pack: str, api_key: str) -> dict:
         try:
             response = client.messages.create(
                 model=config.CLAUDE_SCRIPT_MODEL,
-                max_tokens=2500,
+                max_tokens=8000,
                 system=_SYSTEM,
                 messages=[{"role": "user", "content": user_prompt}],
             )

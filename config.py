@@ -73,7 +73,7 @@ LOGO_ICON_PATH = "assets/logo-icon.png"    # for video watermark
 
 CLAUDE_TOPIC_MODEL = "claude-haiku-4-5"
 CLAUDE_SCRIPT_MODEL = "claude-sonnet-4-6"
-GEMINI_RESEARCH_MODEL = "gemini-1.5-flash"
+GEMINI_RESEARCH_MODEL = "gemini-2.0-flash"
 GEMINI_IMAGE_MODEL = "imagen-3.0-generate-002"
 
 # ── CTAs ──────────────────────────────────────────────────────────────────────
