@@ -5,7 +5,7 @@ import time
 
 import anthropic
 
-from . import config
+import config
 
 _SYSTEM = f"""You are the Booked Wild article agent. You write video scripts for independent
 travel and hospitality experience providers in Europe — lodges (3–30 rooms), tour operators

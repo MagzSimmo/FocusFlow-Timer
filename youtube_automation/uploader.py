@@ -9,9 +9,9 @@ from pathlib import Path
 
 from googleapiclient.http import MediaFileUpload
 
-from . import config
-from .article_to_video import VideoScript
-from .auth import get_youtube_service
+import config
+from article_to_video import VideoScript
+from auth import get_youtube_service
 
 
 def _build_description(script: VideoScript) -> str:
@@ -25,7 +25,7 @@ def _build_description(script: VideoScript) -> str:
     lines.append("")
     lines.append(f"🔍 Find your direct booking gaps — Deep Insight Audit: {config.AUDIT_CTA_URL}")
     lines.append(f"🔔 Subscribe for daily hospitality strategy: {config.CHANNEL_HANDLE}")
-    lines.append(f"\n#DirectBookings #HotelMarketing #HospitalityOperator #BookedWild #OTA")
+    lines.append(f"\n#DirectBookings #AIVisibility #IndependentTravel #BookedWild #OTACommission")
     return "\n".join(lines)
 
 

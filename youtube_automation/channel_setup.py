@@ -11,8 +11,8 @@ Cannot set via API (do manually in studio.youtube.com):
   - Channel name
 
 Usage:
-  python youtube_automation/channel_setup.py
-  python youtube_automation/channel_setup.py --banner /path/to/banner.png
+  python channel_setup.py
+  python channel_setup.py --banner /path/to/banner.png
 """
 
 import argparse
@@ -21,8 +21,8 @@ from pathlib import Path
 
 from googleapiclient.http import MediaFileUpload
 
-from . import config
-from .auth import get_youtube_service
+import config
+from auth import get_youtube_service
 
 
 def set_channel_metadata(youtube):

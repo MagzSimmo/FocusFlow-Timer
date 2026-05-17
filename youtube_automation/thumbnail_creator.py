@@ -8,7 +8,7 @@ from pathlib import Path
 import google.generativeai as genai
 from PIL import Image, ImageDraw, ImageFont
 
-from . import config
+import config
 
 
 def _load_font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:

@@ -2,8 +2,8 @@
 Manual pipeline — convert an existing Booked Wild .md article to a YouTube video.
 
 Usage:
-  python youtube_automation/pipeline_manual.py /path/to/booked-wild-article.md
-  python youtube_automation/pipeline_manual.py /path/to/article.md --no-upload
+  python pipeline_manual.py /path/to/booked-wild-article.md
+  python pipeline_manual.py /path/to/article.md --no-upload
 """
 
 from __future__ import annotations
@@ -15,11 +15,11 @@ import sys
 import tempfile
 from pathlib import Path
 
-from . import config
-from .article_to_video import parse_article
-from .thumbnail_creator import generate_thumbnail
-from .uploader import log_upload, upload_video
-from .video_creator import build_video
+import config
+from article_to_video import parse_article
+from thumbnail_creator import generate_thumbnail
+from uploader import log_upload, upload_video
+from video_creator import build_video
 
 
 def run(article_path: Path, skip_upload: bool = False):

@@ -5,7 +5,7 @@ import time
 
 import google.generativeai as genai
 
-from . import config
+import config
 
 
 def research_topic(topic: str, api_key: str) -> str:

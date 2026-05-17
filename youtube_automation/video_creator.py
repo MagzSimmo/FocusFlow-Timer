@@ -19,8 +19,8 @@ from moviepy.editor import (
 )
 from PIL import Image, ImageDraw, ImageFont
 
-from . import config
-from .article_to_video import VideoScript, VideoSlide
+import config
+from article_to_video import VideoScript, VideoSlide
 
 
 def _load_font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
@@ -139,7 +139,7 @@ def _make_slide_image(
         )
 
     # Logo watermark
-    logo_path = Path(config.LOGO_PATH)
+    logo_path = Path(config.LOGO_ICON_PATH)
     if logo_path.exists():
         try:
             logo = Image.open(logo_path).convert("RGBA")
@@ -192,7 +192,7 @@ def _make_outro_slide(cta: str) -> Image.Image:
     sub_font = _load_font(config.FONT_SIZE_CITATION)
 
     max_w = w - 2 * config.TEXT_PADDING
-    wrapped_cta = _wrap_text(cta or "Subscribe for daily B2B sales tips.", body_font, max_w, draw)
+    wrapped_cta = _wrap_text(cta or "Subscribe for daily travel marketing strategy.", body_font, max_w, draw)
     bbox = draw.multiline_textbbox((0, 0), wrapped_cta, font=body_font, spacing=12)
     th = bbox[3] - bbox[1]
     draw.multiline_text(
@@ -282,7 +282,7 @@ def build_video(
         audio_clips.append(AudioFileClip(str(slide_audio_path)))
 
     # ── Outro slide ───────────────────────────────────────────────────────────
-    outro_text = script.cta or f"Subscribe to {config.CHANNEL_NAME} for daily B2B sales tactics."
+    outro_text = script.cta or f"Subscribe to {config.CHANNEL_NAME} for daily travel marketing strategy."
     outro_audio_path = tmp_dir / "outro.mp3"
     outro_duration = _synth_audio(outro_text, outro_audio_path)
     outro_duration = max(outro_duration, 4.0)

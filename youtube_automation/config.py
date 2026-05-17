@@ -5,7 +5,7 @@ SOURCE OF TRUTH: Brand_Context.md, Brand_Voice_Guide.md,
 Content_Standards.md, Product_Offerings.md (uploaded 2026-05-17)
 
 SETUP NOTES:
-- Add logo files to youtube_automation/assets/:
+- Add logo files to assets/:
     logo-dark.png   (BOOKEDWILD wordmark on dark background — for dark video slides)
     logo-light.png  (BOOKEDWILD wordmark on light background — for light thumbnails)
     logo-icon.png   (wolf icon only — for video watermark, bottom-right corner)
@@ -56,18 +56,18 @@ THUMBNAIL_RESOLUTION = (1280, 720)
 
 IMAGES_PER_VIDEO = 4    # Gemini Imagen calls per video; set to 0 for Pillow-only (free)
 
-FONT_PATH = "youtube_automation/assets/font.ttf"
+FONT_PATH = "assets/font.ttf"
 FONT_SIZE_TITLE = 80
 FONT_SIZE_HEADING = 64
 FONT_SIZE_BODY = 46
 FONT_SIZE_CITATION = 26
 TEXT_PADDING = 100
 
-# ── Logo Paths (add these files manually to youtube_automation/assets/) ───────
+# ── Logo Paths (add these files manually to assets/) ───────
 
-LOGO_DARK_PATH = "youtube_automation/assets/logo-dark.png"    # for dark video slides
-LOGO_LIGHT_PATH = "youtube_automation/assets/logo-light.png"  # for light thumbnails
-LOGO_ICON_PATH = "youtube_automation/assets/logo-icon.png"    # for video watermark
+LOGO_DARK_PATH = "assets/logo-dark.png"    # for dark video slides
+LOGO_LIGHT_PATH = "assets/logo-light.png"  # for light thumbnails
+LOGO_ICON_PATH = "assets/logo-icon.png"    # for video watermark
 
 # ── AI Models ─────────────────────────────────────────────────────────────────
 
@@ -432,5 +432,5 @@ Source: Content_Standards.md
 
 # ── File Paths ────────────────────────────────────────────────────────────────
 
-UPLOAD_LOG_PATH = "youtube_automation/logs/upload_log.json"
+UPLOAD_LOG_PATH = "logs/upload_log.json"
 ASSETS_DIR = "youtube_automation/assets"

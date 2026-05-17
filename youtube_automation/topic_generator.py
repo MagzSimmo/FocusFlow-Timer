@@ -8,7 +8,7 @@ from pathlib import Path
 
 import anthropic
 
-from . import config
+import config
 
 
 def _load_recent_topics(history_path: str, limit: int = 10) -> list[str]:

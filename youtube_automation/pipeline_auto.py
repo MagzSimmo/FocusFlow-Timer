@@ -1,7 +1,7 @@
 """
 Automated daily pipeline — entry point for GitHub Actions.
 
-Run: python -m youtube_automation.pipeline_auto
+Run: python pipeline_auto.py
 """
 
 import os
@@ -11,14 +11,14 @@ import tempfile
 from datetime import datetime
 from pathlib import Path
 
-from . import config
-from .article_to_video import from_script_dict
-from .researcher import research_topic
-from .script_writer import write_script
-from .thumbnail_creator import generate_thumbnail
-from .topic_generator import generate_topic
-from .uploader import log_upload, upload_video
-from .video_creator import build_video
+import config
+from article_to_video import from_script_dict
+from researcher import research_topic
+from script_writer import write_script
+from thumbnail_creator import generate_thumbnail
+from topic_generator import generate_topic
+from uploader import log_upload, upload_video
+from video_creator import build_video
 
 
 def run():
