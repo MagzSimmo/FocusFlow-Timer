@@ -72,8 +72,13 @@ def parse_article(md_text: str) -> VideoScript:
         citation = citation_match.group(1).strip() if citation_match else None
         # Remove citations from spoken text (keep in slide footer instead)
         clean_body = re.sub(r"\s*\(Source:[^)]+\)", "", body).strip()
-        # Remove markdown link syntax from spoken text
+        # Remove markdown link syntax
         clean_body = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", clean_body)
+        # Remove bold/italic markers
+        clean_body = re.sub(r"\*\*(.+?)\*\*", r"\1", clean_body)
+        clean_body = re.sub(r"\*(.+?)\*", r"\1", clean_body)
+        # Remove horizontal rules
+        clean_body = re.sub(r"---+", "", clean_body).strip()
 
         if heading.lower() in _CTA_HEADINGS:
             script.cta = clean_body

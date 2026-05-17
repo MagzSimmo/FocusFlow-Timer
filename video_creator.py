@@ -211,8 +211,22 @@ def _make_outro_slide(cta: str) -> Image.Image:
     return img
 
 
+def _clean_for_tts(text: str) -> str:
+    """Strip markdown symbols that TTS would read aloud."""
+    import re
+    text = re.sub(r'\*\*(.+?)\*\*', r'\1', text)   # **bold** → bold
+    text = re.sub(r'\*(.+?)\*', r'\1', text)         # *italic* → italic
+    text = re.sub(r'---+', '', text)                  # horizontal rules
+    text = re.sub(r'#+\s*', '', text)                 # headings
+    text = re.sub(r'^\s*[-•]\s*', '', text, flags=re.MULTILINE)  # bullets
+    text = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', text)        # links
+    text = re.sub(r'\n{2,}', ' ', text)              # multiple newlines → space
+    return text.strip()
+
+
 def _synth_audio(text: str, output_path: Path, elevenlabs_key: str | None = None) -> float:
     """Synthesise text to MP3 using ElevenLabs (if key provided) or gTTS fallback."""
+    text = _clean_for_tts(text)
     if elevenlabs_key:
         try:
             from elevenlabs.client import ElevenLabs
