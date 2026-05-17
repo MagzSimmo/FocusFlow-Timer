@@ -39,9 +39,10 @@ def _gemini_background(title: str, api_key: str) -> Image.Image | None:
         genai.configure(api_key=api_key)
         imagen = genai.ImageGenerationModel(config.GEMINI_IMAGE_MODEL)
         prompt = (
-            f"Bold professional thumbnail background for a B2B sales YouTube video: {title}. "
-            "Dark navy background, dramatic lighting, abstract business concept, "
-            "no text, no people, suitable for YouTube thumbnail."
+            f"Bold professional thumbnail background for an independent travel marketing "
+            f"YouTube video: {title}. Dark navy background, dramatic travel/nature-inspired "
+            "lighting, abstract landscape or journey concept, no text, no people, "
+            "suitable for YouTube thumbnail."
         )
         result = imagen.generate_images(prompt=prompt, number_of_images=1)
         if result.images:
@@ -109,7 +110,7 @@ def generate_thumbnail(
     )
 
     # Logo bottom-right
-    logo_path = Path(config.LOGO_PATH)
+    logo_path = Path(config.LOGO_ICON_PATH)
     if logo_path.exists():
         try:
             logo = Image.open(logo_path).convert("RGBA")

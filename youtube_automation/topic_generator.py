@@ -1,4 +1,4 @@
-"""Generate a fresh daily B2B topic using Claude, avoiding recently used ones."""
+"""Generate a fresh daily topic for the Booked Wild channel using Claude, avoiding recently used ones."""
 
 import json
 import os

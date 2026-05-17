@@ -53,9 +53,10 @@ def _generate_slide_image_gemini(heading: str, api_key: str) -> Image.Image | No
         genai.configure(api_key=api_key)
         imagen = genai.ImageGenerationModel(config.GEMINI_IMAGE_MODEL)
         prompt = (
-            f"Professional dark minimalist background image for a B2B sales video slide "
-            f"about: {heading}. Abstract, corporate, deep navy and dark tones, "
-            f"subtle texture, no text, no people, suitable as a video slide background."
+            f"Professional dark minimalist background image for an independent travel "
+            f"business video slide about: {heading}. Abstract, nature-inspired, "
+            f"deep navy and dark tones, subtle texture, no text, no people, "
+            f"suitable as a YouTube video slide background."
         )
         result = imagen.generate_images(prompt=prompt, number_of_images=1)
         if result.images:
