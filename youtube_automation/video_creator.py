@@ -10,12 +10,13 @@ from pathlib import Path
 
 import google.generativeai as genai
 from gtts import gTTS
-from moviepy.editor import (
+from moviepy import (
     AudioFileClip,
     CompositeVideoClip,
     ImageClip,
     concatenate_audioclips,
     concatenate_videoclips,
+    vfx,
 )
 from PIL import Image, ImageDraw, ImageFont
 
@@ -245,7 +246,7 @@ def build_video(
 
     intro_img = _make_intro_slide(script.title)
     intro_arr = __import__("numpy").array(intro_img)
-    intro_clip = ImageClip(intro_arr).set_duration(intro_duration).fadein(0.4)
+    intro_clip = ImageClip(intro_arr).with_duration(intro_duration).with_effects([vfx.FadeIn(0.4)])
     clips.append(intro_clip)
     audio_clips.append(AudioFileClip(str(intro_audio_path)))
 
@@ -275,9 +276,8 @@ def build_video(
         slide_arr = np.array(slide_img)
         slide_clip = (
             ImageClip(slide_arr)
-            .set_duration(slide_duration)
-            .fadein(0.3)
-            .fadeout(0.2)
+            .with_duration(slide_duration)
+            .with_effects([vfx.FadeIn(0.3), vfx.FadeOut(0.2)])
         )
         clips.append(slide_clip)
         audio_clips.append(AudioFileClip(str(slide_audio_path)))
@@ -291,21 +291,22 @@ def build_video(
     import numpy as np
     outro_img = _make_outro_slide(script.cta)
     outro_arr = np.array(outro_img)
-    outro_clip = ImageClip(outro_arr).set_duration(outro_duration).fadein(0.4)
+    outro_clip = ImageClip(outro_arr).with_duration(outro_duration).with_effects([vfx.FadeIn(0.4)])
     clips.append(outro_clip)
     audio_clips.append(AudioFileClip(str(outro_audio_path)))
 
     # ── Assemble ──────────────────────────────────────────────────────────────
     final_video = concatenate_videoclips(clips, method="compose")
     final_audio = concatenate_audioclips(audio_clips)
-    final_video = final_video.set_audio(final_audio)
+    final_video = final_video.with_audio(final_audio)
 
     final_video.write_videofile(
         str(output_path),
         fps=config.VIDEO_FPS,
         codec="libx264",
         audio_codec="aac",
-        temp_audiofile=str(tmp_dir / "temp_audio.m4a"),
+        temp_audiofile="temp_audio.m4a",
+        temp_audiofile_path=str(tmp_dir),
         remove_temp=True,
         logger=None,
     )
