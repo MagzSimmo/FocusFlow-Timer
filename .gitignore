@@ -7,5 +7,10 @@ __pycache__/
 outputs/
 tmp_audio/
 *.mp4
+# Allow images in assets/ but exclude generated outputs
 *.jpg
 *.png
+!assets/**/*.jpg
+!assets/**/*.png
+!assets/*.jpg
+!assets/*.png
