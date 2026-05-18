@@ -228,27 +228,20 @@ def _clean_for_tts(text: str) -> str:
     return text.strip()
 
 
-def _synth_audio(text: str, output_path: Path, elevenlabs_key: str | None = None) -> float:
-    """Synthesise text to MP3 using ElevenLabs (if key provided) or gTTS fallback."""
+def _synth_audio(text: str, output_path: Path) -> float:
+    """Synthesise text to MP3 using Edge TTS (primary), ElevenLabs, or gTTS fallback."""
     text = _clean_for_tts(text)
-    if elevenlabs_key:
-        try:
-            from elevenlabs.client import ElevenLabs
-            client = ElevenLabs(api_key=elevenlabs_key)
-            audio_chunks = client.text_to_speech.convert(
-                text=text,
-                voice_id=config.ELEVENLABS_VOICE_ID,
-                model_id="eleven_multilingual_v2",
-                output_format="mp3_44100_128",
-            )
-            with open(str(output_path), "wb") as f:
-                for chunk in audio_chunks:
-                    f.write(chunk)
-        except Exception as e:
-            print(f"[video_creator] ElevenLabs failed: {e}. Falling back to gTTS.")
-            elevenlabs_key = None
 
-    if not elevenlabs_key:
+    # Try Edge TTS first — free, high quality, no account needed
+    try:
+        import asyncio
+        import edge_tts
+        async def _edge_synth():
+            communicate = edge_tts.Communicate(text, voice="en-GB-SoniaNeural")
+            await communicate.save(str(output_path))
+        asyncio.run(_edge_synth())
+    except Exception as e:
+        print(f"[video_creator] Edge TTS failed: {e}. Falling back to gTTS.")
         from gtts import gTTS
         tts = gTTS(text=text, lang="en", tld="co.uk")
         tts.save(str(output_path))
@@ -263,7 +256,6 @@ def build_video(
     script: VideoScript,
     output_path: Path,
     pexels_key: str | None = None,
-    elevenlabs_key: str | None = None,
 ) -> Path:
     """
     Assemble a full MP4 video from the VideoScript.
@@ -278,7 +270,7 @@ def build_video(
 
     # ── Intro slide ───────────────────────────────────────────────────────────
     intro_audio_path = tmp_dir / "intro.mp3"
-    intro_duration = _synth_audio(script.title, intro_audio_path, elevenlabs_key)
+    intro_duration = _synth_audio(script.title, intro_audio_path)
     intro_duration = max(intro_duration, 3.0)
 
     intro_img = _make_intro_slide(script.title)
@@ -296,7 +288,7 @@ def build_video(
         )
 
         slide_audio_path = tmp_dir / f"slide_{i}.mp3"
-        slide_duration = _synth_audio(slide.body_text, slide_audio_path, elevenlabs_key)
+        slide_duration = _synth_audio(slide.body_text, slide_audio_path)
         slide_duration = max(slide_duration, 4.0)
 
         slide_img = _make_slide_image(
@@ -322,7 +314,7 @@ def build_video(
     # ── Outro slide ───────────────────────────────────────────────────────────
     outro_text = script.cta or f"Subscribe to {config.CHANNEL_NAME} for daily travel marketing strategy."
     outro_audio_path = tmp_dir / "outro.mp3"
-    outro_duration = _synth_audio(outro_text, outro_audio_path, elevenlabs_key)
+    outro_duration = _synth_audio(outro_text, outro_audio_path)
     outro_duration = max(outro_duration, 4.0)
 
     import numpy as np

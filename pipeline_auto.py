@@ -24,7 +24,6 @@ from video_creator import build_video
 def run():
     anthropic_key = os.environ["ANTHROPIC_API_KEY"]
     gemini_key = os.environ.get("GEMINI_API_KEY")
-    elevenlabs_key = os.environ.get("ELEVENLABS_API_KEY")
     pexels_key = os.environ.get("PEXELS_API_KEY")
 
     run_dir = Path(tempfile.mkdtemp(prefix="yw_run_"))
@@ -51,7 +50,7 @@ def run():
         # 5 — Build video
         video_path = run_dir / "video.mp4"
         print("[pipeline] Building video...")
-        build_video(video_script, video_path, pexels_key=pexels_key, elevenlabs_key=elevenlabs_key)
+        build_video(video_script, video_path, pexels_key=pexels_key)
         print(f"[pipeline] Video: {video_path} ({video_path.stat().st_size // 1024 // 1024} MB)")
 
         # 6 — Thumbnail
