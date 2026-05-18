@@ -1,55 +1,52 @@
 """
-One-time setup: generate 20 branded background images for video slides and thumbnails.
-Uses Pollinations.ai (free, no API key needed) with Flux image model.
-Run once locally: python setup_assets.py
+One-time setup: download 20 free travel/nature background images from Unsplash.
+No API key needed. Run once locally: python3 setup_assets.py
 Images saved to assets/images/ — commit them to the repo.
 """
 
+import io
 import time
 from pathlib import Path
 
 import requests
-from PIL import Image, ImageDraw
-import io
+from PIL import Image
 
 OUTPUT_DIR = Path("assets/images")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-PROMPTS = [
-    "dramatic coastal cliffs at golden hour, dark navy tones, no people, cinematic",
-    "misty Scottish highlands mountains, moody atmosphere, deep blue tones, no people",
-    "ancient stone cottage in rolling green hills, dusk light, no people",
-    "rugged Atlantic coastline waves crashing, dark stormy sky, no text",
-    "dense ancient forest path with dappled light, deep green and navy, no people",
-    "remote island aerial view, turquoise water, dramatic clouds, no people",
-    "windswept moorland at sunrise, orange and navy sky, no people, cinematic",
-    "luxury boutique hotel exterior at twilight, warm lights, no people",
-    "narrow cobblestone village street, golden evening light, no people",
-    "wild river gorge with waterfalls, lush green, dark tones, no people",
-    "dramatic mountain loch reflection, navy and silver tones, no people",
-    "coastal fishing harbour at dawn, mist, dark moody tones, no people",
-    "rolling vineyard hills at sunset, warm amber tones, no people",
-    "remote lighthouse on rocky headland, stormy sea, dramatic sky",
-    "ancient woodland with bluebells, dappled light, deep green, no people",
-    "mountain pass with dramatic cloud shadows, navy tones, no people",
-    "traditional stone farmhouse in winter landscape, muted tones, no people",
-    "wild meadow with wildflowers, golden hour, bokeh, no people",
-    "dramatic sea stack rock formations, navy ocean, no people, cinematic",
-    "lakeside forest at dawn, mist on water, deep blue and green tones",
+# Unsplash Source keywords — each returns a different relevant photo
+SEARCHES = [
+    "scottish-highlands",
+    "coastal-cliffs",
+    "country-cottage",
+    "atlantic-coast",
+    "ancient-forest",
+    "remote-island",
+    "moorland-sunrise",
+    "boutique-hotel",
+    "cobblestone-village",
+    "waterfall-gorge",
+    "mountain-loch",
+    "fishing-harbour",
+    "vineyard-hills",
+    "lighthouse-stormy",
+    "bluebell-woodland",
+    "mountain-pass",
+    "stone-farmhouse",
+    "wildflower-meadow",
+    "sea-stack-ocean",
+    "misty-lake-forest",
 ]
 
-def generate_image(prompt: str, filename: str, width: int = 1920, height: int = 1080) -> bool:
-    """Download an AI-generated image from Pollinations.ai."""
-    import urllib.parse
-    encoded = urllib.parse.quote(prompt)
-    url = f"https://image.pollinations.ai/prompt/{encoded}?width={width}&height={height}&nologo=true&seed={hash(prompt) % 10000}"
-    
+
+def fetch_image(keywords: str, filename: str, width: int = 1920, height: int = 1080) -> bool:
+    """Download a free photo from Unsplash Source."""
+    url = f"https://source.unsplash.com/{width}x{height}/?{keywords},landscape,nature"
     try:
-        print(f"  Generating: {filename}...")
-        resp = requests.get(url, timeout=60)
+        print(f"  Fetching: {filename} ({keywords})...")
+        resp = requests.get(url, timeout=30, allow_redirects=True)
         resp.raise_for_status()
-        
-        img = Image.open(io.BytesIO(resp.content))
+        img = Image.open(io.BytesIO(resp.content)).convert("RGB")
         out_path = OUTPUT_DIR / filename
         img.save(str(out_path), "JPEG", quality=90)
         print(f"  Saved: {out_path} ({out_path.stat().st_size // 1024} KB)")
@@ -60,26 +57,25 @@ def generate_image(prompt: str, filename: str, width: int = 1920, height: int = 
 
 
 def main():
-    print(f"Generating {len(PROMPTS)} background images...")
+    print(f"Downloading {len(SEARCHES)} background images from Unsplash...")
     print(f"Output: {OUTPUT_DIR.resolve()}\n")
-    
+
     success = 0
-    for i, prompt in enumerate(PROMPTS):
+    for i, keywords in enumerate(SEARCHES):
         filename = f"bg_{i+1:02d}.jpg"
         if (OUTPUT_DIR / filename).exists():
             print(f"  Skipping {filename} (already exists)")
             success += 1
             continue
-        
-        ok = generate_image(prompt, filename)
+        ok = fetch_image(keywords, filename)
         if ok:
             success += 1
-        time.sleep(1)  # be polite to the free API
-    
-    print(f"\nDone: {success}/{len(PROMPTS)} images saved to {OUTPUT_DIR}")
+        time.sleep(0.5)
+
+    print(f"\nDone: {success}/{len(SEARCHES)} images saved to {OUTPUT_DIR}")
     print("\nNext steps:")
     print("  git add assets/images/")
-    print("  git commit -m 'add: AI-generated background images'")
+    print("  git commit -m 'add: background images for video slides'")
     print("  git push origin main")
 
 
