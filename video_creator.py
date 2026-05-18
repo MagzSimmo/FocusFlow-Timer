@@ -70,12 +70,13 @@ def _fetch_pexels_image(query: str, api_key: str, size: tuple[int, int]) -> Imag
 
 
 def _local_background(size: tuple[int, int]) -> Image.Image | None:
-    """Pick a random image from assets/images/ as slide background."""
+    """Pick a random image from assets/images/ or assets/ as slide background."""
     import random
-    images_dir = Path("assets/images")
-    if not images_dir.exists():
-        return None
-    candidates = list(images_dir.glob("*.jpg")) + list(images_dir.glob("*.png"))
+    candidates = []
+    for folder in [Path("assets/images"), Path("assets")]:
+        if folder.exists():
+            candidates += list(folder.glob("*.jpg")) + list(folder.glob("*.png"))
+    candidates = [f for f in candidates if f.is_file()]
     if not candidates:
         return None
     try:
