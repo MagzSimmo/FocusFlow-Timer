@@ -69,6 +69,21 @@ def _fetch_pexels_image(query: str, api_key: str, size: tuple[int, int]) -> Imag
     return None
 
 
+def _local_background(size: tuple[int, int]) -> Image.Image | None:
+    """Pick a random image from assets/images/ as slide background."""
+    import random
+    images_dir = Path("assets/images")
+    if not images_dir.exists():
+        return None
+    candidates = list(images_dir.glob("*.jpg")) + list(images_dir.glob("*.png"))
+    if not candidates:
+        return None
+    try:
+        return Image.open(random.choice(candidates)).resize(size)
+    except Exception:
+        return None
+
+
 def _make_slide_image(
     heading: str,
     body_text: str,
@@ -79,7 +94,9 @@ def _make_slide_image(
     w, h = config.VIDEO_RESOLUTION
     pad = config.TEXT_PADDING
 
-    if use_pexels and pexels_key:
+    # Try local images first (from assets/images/), then Pexels, then solid colour
+    bg = _local_background((w, h))
+    if bg is None and use_pexels and pexels_key:
         search_query = f"travel nature {heading[:40]}"
         bg = _fetch_pexels_image(search_query, pexels_key, (w, h))
     else:

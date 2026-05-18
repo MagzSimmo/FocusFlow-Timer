@@ -55,6 +55,21 @@ def _pexels_background(title: str, api_key: str) -> Image.Image | None:
     return None
 
 
+def _local_background(size: tuple[int, int]) -> Image.Image | None:
+    """Pick a random image from assets/images/ as background."""
+    import random
+    images_dir = Path("assets/images")
+    if not images_dir.exists():
+        return None
+    candidates = list(images_dir.glob("*.jpg")) + list(images_dir.glob("*.png"))
+    if not candidates:
+        return None
+    try:
+        return Image.open(random.choice(candidates)).resize(size)
+    except Exception:
+        return None
+
+
 def generate_thumbnail(
     title: str,
     output_path: Path,
@@ -66,8 +81,9 @@ def generate_thumbnail(
     """
     w, h = config.THUMBNAIL_RESOLUTION
 
-    bg = None
-    if pexels_key and config.IMAGES_PER_VIDEO > 0:
+    # Try local images first, then Pexels, then solid colour
+    bg = _local_background((w, h))
+    if bg is None and pexels_key and config.IMAGES_PER_VIDEO > 0:
         bg = _pexels_background(title, pexels_key)
 
     if bg is None:
