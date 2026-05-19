@@ -87,7 +87,7 @@ LOGO_ICON_PATH = "assets/logo-icon.png"    # for video watermark
 # ── AI Models ─────────────────────────────────────────────────────────────────
 
 CLAUDE_TOPIC_MODEL = "claude-haiku-4-5"
-CLAUDE_SCRIPT_MODEL = "claude-sonnet-4-6"
+CLAUDE_SCRIPT_MODEL = "claude-haiku-4-5"
 GEMINI_RESEARCH_MODEL = "gemini-2.0-flash"
 GEMINI_IMAGE_MODEL = "imagen-3.0-generate-002"
 ELEVENLABS_VOICE_ID = "21m00Tcm4TlvDq8ikWAM"  # Rachel — warm, professional
